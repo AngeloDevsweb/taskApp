@@ -1,12 +1,48 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+//importar nuestros componentes o screens
+import Tareas from './screens/Tareas'
+import CreateTask from './screens/CreateTask'
 
 export default function App() {
+
+    const Stack = createStackNavigator();
+
+    function MyStack() {
+      return (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Tareas"
+            component={Tareas}
+            options={{
+              title: "TAREAS",
+              headerTitleAlign: "center",
+              headerStyle: { backgroundColor: "#8B1874" },
+              headerTintColor: "white",
+            }}
+          />
+
+          <Stack.Screen
+            name="Crear"
+            component={CreateTask}
+            options={{
+              title: "CREAR TAREA",
+              headerTitleAlign: "center",
+              headerStyle: { backgroundColor: "#8B1874" },
+              headerTintColor: "white",
+            }}
+          />
+        </Stack.Navigator>
+      );
+    }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+    <MyStack/>
+  </NavigationContainer>
   );
 }
 
