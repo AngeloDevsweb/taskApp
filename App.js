@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 //importar nuestros componentes o screens
 import Tareas from './screens/Tareas'
 import CreateTask from './screens/CreateTask'
+import DetailsNote from './screens/DetailsNote';
 
 export default function App() {
 
@@ -30,6 +31,17 @@ export default function App() {
             component={CreateTask}
             options={{
               title: "CREAR NOTA",
+              headerTitleAlign: "center",
+              headerStyle: { backgroundColor: "#8B1874" },
+              headerTintColor: "white",
+            }}
+          />
+
+          <Stack.Screen
+            name="Detail"
+            component={DetailsNote}
+            options={{
+              title: "DETALLES DE NOTA",
               headerTitleAlign: "center",
               headerStyle: { backgroundColor: "#8B1874" },
               headerTintColor: "white",
