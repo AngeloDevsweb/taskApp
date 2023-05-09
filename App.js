@@ -15,10 +15,10 @@ export default function App() {
       return (
         <Stack.Navigator>
           <Stack.Screen
-            name="Tareas"
+            name="Notas"
             component={Tareas}
             options={{
-              title: "TAREAS",
+              title: "NOTAS",
               headerTitleAlign: "center",
               headerStyle: { backgroundColor: "#8B1874" },
               headerTintColor: "white",
@@ -29,7 +29,7 @@ export default function App() {
             name="Crear"
             component={CreateTask}
             options={{
-              title: "CREAR TAREA",
+              title: "CREAR NOTA",
               headerTitleAlign: "center",
               headerStyle: { backgroundColor: "#8B1874" },
               headerTintColor: "white",

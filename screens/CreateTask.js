@@ -1,12 +1,21 @@
 import { useState } from 'react';
-import { Text, StyleSheet, View, TextInput, Button, Platforms } from 'react-native'
+import { Text, StyleSheet, View, TextInput, Button, Platforms, Alert } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 
+import appFirebase from '../credenciales'
+import {getFirestore, collection, addDoc, getDocs, doc, deleteDoc, getDoc, setDoct} from 'firebase/firestore'
+const db = getFirestore(appFirebase)
 
 
-export default function CreateTask(){
+
+export default function CreateTask(props){
+
+    const initialState = {
+        titulo : '',
+        detalle:'',       
+    }
 
     const [date, setDate] = useState(new Date(1598051730000));
     const [mode, setMode] = useState("date");
@@ -14,6 +23,7 @@ export default function CreateTask(){
     const [text, setText] = useState("empty");
     const [fecha, setFecha] =useState("");
     const [hora, setHora] =useState("");
+    const [estado, setEstado] = useState(initialState);
 
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
@@ -39,51 +49,115 @@ export default function CreateTask(){
       setMode(currentDate);
     };
 
+    const handleChangeText = (value, name)=>{
+        setEstado({...estado, [name]:value})
+    }
+
+    const saveNote = async()=>{
+        try {
+            if(estado.titulo === '' || estado.detalle === ''){
+                Alert.alert('mensaje importante', 'debes rellenar el campo requerido')
+            }
+            else{
+                const nota = {
+                    titulo : estado.titulo,
+                    detalle: estado.detalle,
+                    fecha: fecha,
+                    hora: hora
+                }
+                //console.log(nota);
+                await addDoc(collection(db, 'notas'),{
+                    ...nota
+                })
+                Alert.alert('Exito', 'guardado con exito')
+                props.navigation.navigate('Notas')
+            }
+            
+            
+        } catch (error) {
+            console.log(error); 
+        }
+        
+    }
 
     return (
       <View style={styles.contenedorPadre}>
         <View style={styles.tarjeta}>
-        <View style={styles.contenedor}>
-          <TextInput placeholder="Ingresa el titulo" style={styles.textoInput} />
+          <View style={styles.contenedor}>
+            <TextInput
+              placeholder="Ingresa el titulo"
+              style={styles.textoInput}
+              onChangeText={(value)=>handleChangeText(value,'titulo')}
+              value={estado.titulo}
+            />
 
-          <TextInput
-            placeholder="Ingresa el detalle"
-            style={styles.textoInput}
-            multiline={true}
-            numberOfLines={4}
-          />
-         
-        <View style={styles.inputDate}>
-            <TextInput placeholder="5/5/2023" style={styles.textoDate} value={fecha} />   
-            <TouchableOpacity style={styles.botonDate} onPress = {()=>showMode('date')}>
+            <TextInput
+              placeholder="Ingresa el detalle"
+              style={styles.textoInput}
+              multiline={true}
+              numberOfLines={4}
+              onChangeText={(value)=>handleChangeText(value,'detalle')}
+              value={estado.detalle}
+            />
+            {/* contenedor de fecha */}
+            <View style={styles.inputDate}>
+              <TextInput
+                placeholder="5/5/2023"
+                style={styles.textoDate}
+                value={fecha}
+                
+                
+              />
+              <TouchableOpacity
+                style={styles.botonDate}
+                onPress={() => showMode("date")}
+              >
                 <Text style={styles.subtitle}>Date</Text>
-            </TouchableOpacity>
-            {/* <Button title="Datepicker" onPress = {()=>showMode('date')} />  */}
-        </View> 
-        {/* <Text>{text}</Text> */}
-        
-        <View style={styles.inputDate}>
-            <TextInput placeholder="Hora: 6 minutos: 30" style={styles.textoDate} value={hora} /> 
-            <TouchableOpacity style={styles.botonDate} onPress = {()=>showMode('time')}>
+              </TouchableOpacity>
+              {/* <Button title="Datepicker" onPress = {()=>showMode('date')} />  */}
+            </View>
+            {/* <Text>{text}</Text> */}
+
+            {/* contenedor de hora */}
+            <View style={styles.inputDate}>
+              <TextInput
+                placeholder="Hora: 6 minutos: 30"
+                style={styles.textoDate}
+                value={hora}
+                
+              />
+              <TouchableOpacity
+                style={styles.botonDate}
+                onPress={() => showMode("time")}
+              >
                 <Text style={styles.subtitle}>Hora</Text>
-            </TouchableOpacity>
-            {/* <Button title="Timepicher" onPress = {()=>showMode('time')} /> */}
-        </View>
-        
+              </TouchableOpacity>
+              {/* <Button title="Timepicher" onPress = {()=>showMode('time')} /> */}
+            </View>
 
-        {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display='default'
-          onChange={onChange}
-          minimumDate={new Date('2023-1-1')}
-        />
-      )}
-
-        </View>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+                minimumDate={new Date("2023-1-1")}
+              />
+            )}
+            {/* boton para enviar los datos */}
+            <View>
+              <TouchableOpacity
+                style={styles.botonEnviar}
+                onPress={saveNote}
+              >
+                <Text style={styles.textoBtnEnviar}>
+                  Agregar una nueva nota
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </View>
     );
@@ -146,5 +220,21 @@ const styles = StyleSheet.create({
     subtitle:{
         color:'white',
         fontSize:18
+    },
+    botonEnviar:{
+        backgroundColor: '#B71375',
+        borderColor: '#FC4F00',
+        borderWidth:3,
+        borderRadius: 20,
+        marginLeft: 20,
+        marginRight:20,
+        marginTop:20    
+    },
+    textoBtnEnviar:{
+        textAlign:'center',
+        padding:10,
+        color:'white',
+        fontSize:16
     }
+
 })

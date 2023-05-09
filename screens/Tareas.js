@@ -6,7 +6,7 @@ export default function Tareas(props) {
     <ScrollView>
       <View>
         <TouchableOpacity style={styles.boton} onPress={()=>props.navigation.navigate('Crear')} >
-          <Text style={styles.textoBoton}>Agregar una nueva tarea</Text>
+          <Text style={styles.textoBoton}>Agregar una nueva nota</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
